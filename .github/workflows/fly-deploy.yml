@@ -1,0 +1,27 @@
+name: Fly Deploy
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - .github/workflows/*.yml
+      - backend/src/**
+      - backend/build.gradle.kts
+      - backend/settings.gradle.kts
+      - backend/fly.toml
+      - backend/Dockerfile
+
+jobs:
+  deploy:
+    name: Deploy app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      - name: Deploy Fly App
+        run: flyctl deploy --remote-only
+        working-directory: ./backend
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
